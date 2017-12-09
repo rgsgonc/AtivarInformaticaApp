@@ -18,20 +18,24 @@ import br.com.alura.ativarinformatica.model.Cliente;
 
 public class ClienteDAO extends SQLiteOpenHelper {
     public ClienteDAO(Context context) {
-        super(context, "Ativar", null, 1);
+        super(context, "Ativar", null, 2);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE Clientes (id INTEGER PRIMARY KEY, nome TEXT NOT NULL, endereco TEXT, telefone TEXT, site TEXT);";
+        String sql = "CREATE TABLE Clientes (id INTEGER PRIMARY KEY, nome TEXT NOT NULL, endereco TEXT, telefone TEXT, site TEXT, caminhoFoto TEXT);";
         db.execSQL(sql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql = "DROP TABLE IF EXISTS Clientes";
-        db.execSQL(sql);
-        onCreate(db);
+        String sql = "";
+        switch (oldVersion){
+            case 1:
+                sql = "ALTER TABLE Clientes ADD COLUMN caminhoFoto TEXT";
+                db.execSQL(sql);
+        }
+
     }
 
     public void insere(Cliente cliente) {
@@ -50,6 +54,7 @@ public class ClienteDAO extends SQLiteOpenHelper {
         dados.put("endereco", cliente.getEndereco());
         dados.put("telefone", cliente.getTelefone());
         dados.put("site", cliente.getSite());
+        dados.put("caminhoFoto", cliente.getCaminhoFoto());
         return dados;
     }
 
@@ -66,6 +71,7 @@ public class ClienteDAO extends SQLiteOpenHelper {
             cliente.setEndereco(c.getString(c.getColumnIndex("endereco")));
             cliente.setTelefone(c.getString(c.getColumnIndex("telefone")));
             cliente.setSite(c.getString(c.getColumnIndex("site")));
+            cliente.setCaminhoFoto(c.getString(c.getColumnIndex("caminhoFoto")));
             clientes.add(cliente);
         }
         c.close();
